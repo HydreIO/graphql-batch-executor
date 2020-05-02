@@ -7,6 +7,7 @@
   "scripts": {
     "test": "node test/index.js",
     "lint": "eslint --color .",
+    "example": "DEBUG='batch:example*' node example/index.js",
     "postversion": "git push && git push --tags"
   },
   "repository": {

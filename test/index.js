@@ -11,7 +11,7 @@ import {
 } from 'stream'
 
 import tap_spec from 'tap-spec-emoji'
-import Resolver from '../src/index.js'
+import Executor from '../src/index.js'
 
 sync_pipeline(
     doubt.stream(),
@@ -65,14 +65,14 @@ const resolvers = {
   },
 }
 
-'The batch resolver'.doubt(async () => {
+'The batch Executor'.doubt(async () => {
   await 'allows multiple queries to run'.because(async () => {
-    const resolver = new Resolver({
+    const executor = new Executor({
       schema,
       rootValue: resolvers,
     })
 
-    const batch_resolve = resolver.generate.bind(resolver)
+    const batch_resolve = executor.generate.bind(executor)
 
     const document = /* GraphQL */`
       query foo {
@@ -119,13 +119,13 @@ const resolvers = {
 
   const count = 4
   await 'allows multiple subscriptions to be loadbalanced'.because(async () => {
-    const resolver = new Resolver({
+    const executor = new Executor({
       schema,
       rootValue: resolvers,
       high_water_mark: 50,
     })
 
-    const batch_resolve = resolver.generate.bind(resolver)
+    const batch_resolve = executor.generate.bind(executor)
 
     const document = /* GraphQL */`
       subscription foo {

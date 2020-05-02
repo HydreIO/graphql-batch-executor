@@ -10,7 +10,7 @@ import process_query from './process_query.js'
 import process_subscription from './process_subscription.js'
 import Processing_Error from './processing_error.js'
 
-const log = debug('batch-resolver')
+const log = debug('batch-executor')
 const HIGH_WATER_MARK_DEFAULT = 100
 
 const forward_error = stream => error => {
@@ -19,7 +19,7 @@ const forward_error = stream => error => {
   })
 }
 
-export default class Resolver {
+export default class Executor {
   #schema
   #logger
   #high_water_mark
@@ -28,7 +28,7 @@ export default class Resolver {
   #process_source
 
   /**
-   * A batch resolver which provide a generator yielding
+   * A batch executor which provide a generator yielding
    * each operation in parallel
    * @param {Object} options
    * @param {graphql.SchemaDefinitionNode} options.schema the graphql schema
