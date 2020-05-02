@@ -15,7 +15,6 @@ jobs:
       - uses: actions/setup-node@v1
         with:
           node-version: 14
-          scope: "@hydre"
       - run: npm i
       - run: npm run lint
       - run: npm test
@@ -30,6 +29,7 @@ jobs:
         with:
           node-version: 14
           registry-url: https://registry.npmjs.org/
+          scope: "@hydre"
       - run: npm ci
       - run: npm publish
         env:
