@@ -4,7 +4,6 @@ import {
 
 import debug from 'debug'
 
-import invariant from 'invariant'
 import graphql_invariant from './graphql_invariant.js'
 import process_source from './process_source.js'
 import process_query from './process_query.js'
@@ -40,14 +39,14 @@ export default class Resolver {
    * passthrough stream in charge of yielding an unique operation
    */
   constructor({
-    schema,
+    schema = (() => {
+      throw new Error('Schema must be defined')
+    })(),
     contextValue = {},
     rootValue = {},
     id = 'anon',
     high_water_mark = HIGH_WATER_MARK_DEFAULT,
   }) {
-    invariant(schema, 'Schema must be defined')
-
     this.#schema = schema
     this.#logger = log.extend(id)
     this.#process_source = process_source(schema)
