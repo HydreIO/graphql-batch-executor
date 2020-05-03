@@ -1,20 +1,16 @@
 import graphql from 'graphql'
 import Resolver from '../src/index.js'
 import debug from 'debug'
-
 import {
   readFileSync,
 } from 'fs'
-
 import {
   join,
   dirname,
 } from 'path'
-
 import {
   fileURLToPath,
 } from 'url'
-
 import {
   PassThrough,
   pipeline,
@@ -22,23 +18,21 @@ import {
 
 const directory = dirname(fileURLToPath(import.meta.url))
 const log = debug('batch').extend('example')
-
 const {
   buildSchema,
 } = graphql
-
 const schema = buildSchema(readFileSync(join(directory, 'schema.gql'), 'utf-8'))
 const interval = 500
 
 let event = 0
-const max_event = 3
 
+const max_event = 3
 const rootValue = {
   ping() {
     return 'pong chin chan'
   },
   async* onEvent() {
-    for (; ;) {
+    for (;;) {
       await new Promise(resolve => setTimeout(resolve, interval))
       yield {
         onEvent: ++event,
@@ -46,19 +40,16 @@ const rootValue = {
     }
   },
 }
-
 const resolver = new Resolver({
-  id: 'user_01',
+  id             : 'user_01',
+  contextValue   : {},
+  high_water_mark: 40,
   schema,
   rootValue,
-  contextValue: {},
-  high_water_mark: 40,
 })
-
 const batch_resolve = resolver.generate.bind(resolver)
-
 const client = new PassThrough({
-  objectMode: true,
+  objectMode   : true,
   highWaterMark: 100,
 })
 
@@ -74,11 +65,7 @@ pipeline(
     async source => {
       for await (const chunk of source) {
         const {
-          id,
-          operation_type,
-          operation_name,
-          data,
-          errors,
+          id, operation_type, operation_name, data, errors,
         } = chunk
         log('id %O', id)
         log('operation_type %O', operation_type)
@@ -95,8 +82,8 @@ pipeline(
 )
 
 client.write({
-  id: 'example operation',
-  document: /* GraphQL */`
+  id      : 'example operation',
+  document: /* GraphQL */ `
     query foo {
       ping
       peng: ping

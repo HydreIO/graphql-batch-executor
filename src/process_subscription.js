@@ -9,12 +9,11 @@ import {
 const {
   subscribe,
 } = graphql
-
 const pipeline = promisify(node_stream.pipeline)
 
 /**
-  * execute a subscription
-  */
+ * execute a subscription
+ */
 export default async ({
   id,
   log_op,
@@ -46,9 +45,11 @@ export default async ({
     )
     return
   }
+
   throw new Processing_Error({
     id,
     operation_type,
     operation_name,
-  }, maybe_iterator)
+  },
+  maybe_iterator)
 }

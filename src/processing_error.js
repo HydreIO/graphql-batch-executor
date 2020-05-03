@@ -8,10 +8,9 @@ const {
 
 export default class Processing_Error extends GraphQLError {
   constructor({
-    id = 'none',
-    operation_name = 'none',
-    operation_type = 'none',
-  }, raw_graphql_error) {
+    id = 'none', operation_name = 'none', operation_type = 'none',
+  },
+  raw_graphql_error) {
     super('processing error')
     Object.assign(this, {
       ...raw_graphql_error,

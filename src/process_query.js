@@ -30,8 +30,10 @@ export default async ({
       id,
       operation_type,
       operation_name,
-    }, bloc_result)
+    },
+    bloc_result)
   }
+
   return {
     id,
     operation_type,

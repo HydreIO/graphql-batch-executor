@@ -12,7 +12,6 @@ import Processing_Error from './processing_error.js'
 
 const log = debug('batch-executor')
 const HIGH_WATER_MARK_DEFAULT = 100
-
 const forward_error = stream => error => {
   stream.write({
     ...error,
@@ -64,9 +63,7 @@ export default class Executor {
    * and output processing datas for each bloc
    */
   build_processing_options({
-    id,
-    documents,
-    variables,
+    id, documents, variables,
   }) {
     const log_op = this.#logger.extend(`op<${ id }>`)
     return documents.map(document => {
@@ -97,38 +94,32 @@ export default class Executor {
     const operations = []
     this.#logger('dispatching %O', datas)
 
-    for (
-      const processing_options of this.build_processing_options(datas)
-    ) {
+    for (const processing_options of this.build_processing_options(datas)) {
       switch (processing_options.operation_type) {
         case 'subscription':
-          operations.push(
-              process_subscription({
-                ...processing_options,
-                stream,
-              })
-                  .catch(forward_error(stream)),
-          )
+          operations.push(process_subscription({
+            ...processing_options,
+            stream,
+          }).catch(forward_error(stream)))
           break
 
         case 'query':
+
         case 'mutation':
-          operations.push(
-              process_query(processing_options)
-                  .then(data => {
-                    stream.write(data)
-                  })
-                  .catch(forward_error(stream)),
-          )
+          operations.push(process_query(processing_options)
+              .then(data => {
+                stream.write(data)
+              })
+              .catch(forward_error(stream)))
           break
 
         default:
           graphql_invariant(false,
               `This library version doesn't support the\
-           ${ processing_options.operation_type } operation.`,
-          )
+           ${ processing_options.operation_type } operation.`)
       }
     }
+
     await Promise.all(operations)
   }
 
@@ -139,7 +130,7 @@ export default class Executor {
   async* generate(source) {
     for await (const chunk of source) {
       const stream = new PassThrough({
-        objectMode: true,
+        objectMode   : true,
         highWaterMark: this.#high_water_mark,
       })
 
@@ -165,6 +156,7 @@ export default class Executor {
       }
       this.#logger('chunk processed.')
     }
+
     this.#logger('source processed.')
   }
 }

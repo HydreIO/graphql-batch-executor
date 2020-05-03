@@ -5,11 +5,13 @@ const {
   GraphQLError,
 } = graphql
 
-export default (condition, message, {
-  id = 'none',
-  operation_type = 'none',
-  operation_name = 'none',
-} = {}) => {
+export default (
+    condition,
+    message,
+    {
+      id = 'none', operation_type = 'none', operation_name = 'none',
+    } = {},
+) => {
   if (!condition) {
     throw new Processing_Error({
       id,
@@ -18,7 +20,7 @@ export default (condition, message, {
     },
     {
       errors: [new GraphQLError(message)],
-      data: undefined,
+      data  : undefined,
     })
   }
 }
