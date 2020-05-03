@@ -5,15 +5,13 @@ import {
   readFileSync,
 } from 'fs'
 import {
-  join,
-  dirname,
+  join, dirname,
 } from 'path'
 import {
   fileURLToPath,
 } from 'url'
 import {
-  PassThrough,
-  pipeline,
+  PassThrough, pipeline,
 } from 'stream'
 
 const directory = dirname(fileURLToPath(import.meta.url))
