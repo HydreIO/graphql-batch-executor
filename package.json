@@ -8,6 +8,7 @@
     "test": "node test/index.js",
     "lint": "eslint --color .",
     "format": "prettier-eslint $PWD/\"**/*.js\" --write",
+    "format:check": "prettier-eslint $PWD/\"**/*.js\" --list-different",
     "example": "DEBUG='batch:example*' node example/index.js",
     "postversion": "git push && git push --tags"
   },
