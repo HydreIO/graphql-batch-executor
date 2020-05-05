@@ -51,6 +51,7 @@ const client = new PassThrough({
   highWaterMark: 100,
 })
 
+// beware this exemple is synchrone
 pipeline(
     client,
     batch_resolve,
@@ -63,9 +64,8 @@ pipeline(
     async source => {
       for await (const chunk of source) {
         const {
-          id, operation_type, operation_name, data, errors,
+          operation_type, operation_name, data, errors,
         } = chunk
-        log('id %O', id)
         log('operation_type %O', operation_type)
         log('operation_name %O', operation_name)
         log('data %O', data)

@@ -81,26 +81,25 @@ stream.pipeline(
           stream
         }
 
-        const {
-          // the same id as returned in the executed_operation object
-          id,
+        for await (const chunk of stream) {
+          const {
+            // query, mutation, subscription
+            operation_type,
 
-          // query, mutation, subscription
-          operation_type,
+            // the name
+            // here we didn't defined any so it will
+            // default to 'anon'
+            // be careful as you will not be able to
+            // differenciate unamed queries
+            operation_name,
 
-          // the name
-          // here we didn't defined any so it will
-          // default to 'anon'
-          // be careful as you will not be able to
-          // differenciate unamed queries
-          operation_name,
+            // data result or null
+            data,
 
-          // data result or null
-          data,
-
-          // gql errors or null
-          errors,
-        } = stream.next().value
+            // gql errors or null
+            errors,
+          } = chunk
+        }
       }
     },
     () => {

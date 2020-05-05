@@ -9,7 +9,6 @@ const {
  * Execute a query or mutation
  */
 export default async ({
-  id,
   log_op,
   operation_type,
   operation_name,
@@ -27,7 +26,6 @@ export default async ({
   }
   if (bloc_result.errors?.length) {
     throw new Processing_Error({
-      id,
       operation_type,
       operation_name,
     },
@@ -35,7 +33,6 @@ export default async ({
   }
 
   return {
-    id,
     operation_type,
     ...bloc_result,
   }

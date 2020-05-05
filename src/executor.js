@@ -76,7 +76,6 @@ export default class Executor {
       } = operation
 
       return {
-        id,
         log_op,
         operation_type,
         operation_name,
@@ -151,7 +150,7 @@ export default class Executor {
           })
 
       yield {
-        id: chunk.id || 'none',
+        id: chunk.id ?? 'none',
         stream,
       }
       this.#logger('chunk processed.')
