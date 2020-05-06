@@ -1,6 +1,4 @@
-import {
-  PassThrough,
-} from 'stream'
+import { PassThrough } from 'stream'
 
 import debug from 'debug'
 
@@ -13,9 +11,7 @@ import Processing_Error from './processing_error.js'
 const log = debug('batch-executor')
 const HIGH_WATER_MARK_DEFAULT = 100
 const forward_error = stream => error => {
-  stream.write({
-    ...error,
-  })
+  stream.write({ ...error })
 }
 
 export default class Executor {
@@ -66,13 +62,12 @@ export default class Executor {
     id, documents, variables,
   }) {
     const log_op = this.#logger.extend(`op<${ id }>`)
+
     return documents.map(document => {
       const [operation] = document.definitions
       const {
         operation: operation_type,
-        name: {
-          value: operation_name = 'anon',
-        } = {},
+        name: { value: operation_name = 'anon' } = {},
       } = operation
 
       return {
@@ -91,6 +86,7 @@ export default class Executor {
   async dispatch_operations(stream, chunk) {
     const datas = this.#process_source(chunk)
     const operations = []
+
     this.#logger('dispatching %O', datas)
 
     for (const processing_options of this.build_processing_options(datas)) {
@@ -126,7 +122,7 @@ export default class Executor {
    * A generator that execute graphql queries, mutations and subscription.
    * @returns a stream handling a unique batch of operations
    */
-  async* generate(source) {
+  async *generate(source) {
     for await (const chunk of source) {
       const stream = new PassThrough({
         objectMode   : true,
@@ -139,11 +135,9 @@ export default class Executor {
             stream.end()
           })
           .catch(error => {
-            if (error instanceof Processing_Error) {
-              stream.write({
-                ...error,
-              })
-            } else {
+            if (error instanceof Processing_Error)
+              stream.write({ ...error })
+            else {
               console.error(error)
               stream.end()
             }

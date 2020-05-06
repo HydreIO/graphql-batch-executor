@@ -1,0 +1,13 @@
+  type Query {
+    ping: String!
+    me: User!
+  }
+
+  type User {
+    name: String!
+  }
+
+  type Subscription {
+    pingCount: Int!
+    infinite: Boolean!
+  }
