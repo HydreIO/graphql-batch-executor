@@ -9,5 +9,6 @@
 
   type Subscription {
     pingCount: Int!
+    withArg: Int!
     infinite: Boolean!
   }

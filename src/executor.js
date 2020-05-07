@@ -10,9 +10,6 @@ import Processing_Error from './processing_error.js'
 
 const log = debug('batch-executor')
 const HIGH_WATER_MARK_DEFAULT = 100
-const forward_error = stream => error => {
-  stream.write({ ...error })
-}
 
 export default class Executor {
   #schema
@@ -41,7 +38,7 @@ export default class Executor {
     rootValue = {},
     id = 'anon',
     high_water_mark = HIGH_WATER_MARK_DEFAULT,
-  }) {
+  } = {}) {
     this.#schema = schema
     this.#logger = log.extend(id)
     this.#process_source = process_source(schema)
@@ -95,19 +92,20 @@ export default class Executor {
           operations.push(process_subscription({
             ...processing_options,
             stream,
-          }).catch(forward_error(stream)))
+          }))
           break
 
         case 'query':
 
         case 'mutation':
-          operations.push(process_query(processing_options)
-              .then(data => {
-                stream.write(data)
-              })
-              .catch(forward_error(stream)))
+          operations.push(process_query(processing_options).then(data => {
+            stream.write(data)
+          }))
+
           break
 
+        /* c8 ignore next 5 */
+        // unreachable in the current graphql spec
         default:
           graphql_invariant(false,
               `This library version doesn't support the\
@@ -115,12 +113,12 @@ export default class Executor {
       }
     }
 
-    await Promise.all(operations)
+    return Promise.all(operations)
   }
 
   /**
    * A generator that execute graphql queries, mutations and subscription.
-   * @returns a stream handling a unique batch of operations
+   * @returns an async iterator handling a unique batch of operations
    */
   async *generate(source) {
     for await (const chunk of source) {
@@ -135,12 +133,8 @@ export default class Executor {
             stream.end()
           })
           .catch(error => {
-            if (error instanceof Processing_Error)
-              stream.write({ ...error })
-            else {
-              console.error(error)
-              stream.end()
-            }
+            if (error instanceof Processing_Error) stream.write({ ...error })
+            else stream.destroy(error)
           })
 
       yield {

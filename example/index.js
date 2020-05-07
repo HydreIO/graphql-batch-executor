@@ -1,24 +1,18 @@
 import graphql from 'graphql'
 import Resolver from '../src/index.js'
 import debug from 'debug'
-import {
-  readFileSync,
-} from 'fs'
+import { readFileSync } from 'fs'
 import {
   join, dirname,
 } from 'path'
-import {
-  fileURLToPath,
-} from 'url'
+import { fileURLToPath } from 'url'
 import {
   PassThrough, pipeline,
 } from 'stream'
 
 const directory = dirname(fileURLToPath(import.meta.url))
 const log = debug('batch').extend('example')
-const {
-  buildSchema,
-} = graphql
+const { buildSchema } = graphql
 const schema = buildSchema(readFileSync(join(directory, 'schema.gql'), 'utf-8'))
 const interval = 500
 
@@ -29,12 +23,10 @@ const rootValue = {
   ping() {
     return 'pong chin chan'
   },
-  async* onEvent() {
+  async *onEvent() {
     for (;;) {
       await new Promise(resolve => setTimeout(resolve, interval))
-      yield {
-        onEvent: ++event,
-      }
+      yield { onEvent: ++event }
     }
   },
 }
@@ -55,7 +47,7 @@ const client = new PassThrough({
 pipeline(
     client,
     batch_resolve,
-    async function* (source) {
+    async function *(source) {
       for await (const operation of source) {
         log('processing %O', operation.id)
         yield* operation.stream
@@ -66,6 +58,7 @@ pipeline(
         const {
           operation_type, operation_name, data, errors,
         } = chunk
+
         log('operation_type %O', operation_type)
         log('operation_name %O', operation_name)
         log('data %O', data)

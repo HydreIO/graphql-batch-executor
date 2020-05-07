@@ -1,7 +1,7 @@
 import graphql from 'graphql'
 import { promisify } from 'util'
 import stream from 'stream'
-import Executor from '../src/index.js'
+import Executor from '../../src/index.js'
 import { readFileSync } from 'fs'
 import {
   join, dirname,
@@ -31,14 +31,15 @@ const resolvers = {
     }
   },
 }
+const file = readFileSync(join(directory, '../schema.gql'), 'utf-8')
 const executor = new Executor({
-  schema   : buildSchema(readFileSync(join(directory, 'schema.gql'), 'utf-8')),
+  schema   : buildSchema(file),
   rootValue: resolvers,
 })
-const batch_execute = executor.generate.bind(executor)
+const batch_executor = executor.generate.bind(executor)
 
-'Subscriptions keep executing until the stream is terminated'
-    .doubt(async () => {
+'Subscriptions keep executing until the \
+stream is terminated'.doubt(async () => {
       const document = /* GraphQL */ `
       subscription {
         infinite
@@ -70,9 +71,7 @@ const batch_execute = executor.generate.bind(executor)
       }
 
       await pipeline(
-          write_operation,
-          batch_execute,
-          read_operation,
+          write_operation, batch_executor, read_operation,
       )
 
       'response_count'
@@ -81,8 +80,8 @@ const batch_execute = executor.generate.bind(executor)
           .is(LIMIT)
     })
 
-'Subscriptions in an operation are loadbalanced when they share the same field'
-    .doubt(async () => {
+'Subscriptions in an operation are loadbalanced \
+when they share the same field'.doubt(async () => {
       const document = /* GraphQL */ `
       subscription foo {
         workerA: pingCount
@@ -110,8 +109,7 @@ const batch_execute = executor.generate.bind(executor)
             operation_type, operation_name,
           } = chunk
 
-          if (operation_type === 'subscription')
-            results.push(operation_name)
+          if (operation_type === 'subscription') results.push(operation_name)
         }
       }
       const read_operation = async source => {
@@ -130,9 +128,7 @@ const batch_execute = executor.generate.bind(executor)
       }
 
       await pipeline(
-          write_operation,
-          batch_execute,
-          read_operation,
+          write_operation, batch_executor, read_operation,
       )
 
       'results'

@@ -5,6 +5,13 @@ import Processing_Error from './processing_error.js'
 const {
   separateOperations, parse, validate,
 } = graphql
+const parse_or_errors = document => {
+  try {
+    return { data: parse(document, { noLocation: true }) }
+  } catch (error) {
+    return { errors: [error] }
+  }
+}
 
 /**
  * Validate an incoming json chunk
@@ -16,29 +23,37 @@ const {
 export default schema => ({
   id, document, variables = {},
 }) => {
-  graphql_invariant(id !== undefined, 'Missing batch id')
-  const parsed = parse(document, {
-    noLocation: true,
-  })
-  const errors = validate(schema, parsed)
+  graphql_invariant(id !== undefined, 'Missing operation id')
+  graphql_invariant(document, 'No document was provided')
 
-  if (errors.length) {
-    throw new Processing_Error({
-      id,
-    },
-    {
-      errors,
-      data: undefined,
-    })
+  const {
+    data, errors,
+  } = parse_or_errors(document)
+
+  if (errors?.length) {
+    throw new Processing_Error({ id },
+        {
+          errors,
+          data: undefined,
+        })
   }
 
-  const documents = Object.values(separateOperations(parsed))
+  const validation_errors = validate(schema, data)
+
+  if (validation_errors?.length) {
+    throw new Processing_Error({ id },
+        {
+          errors: validation_errors,
+          data  : undefined,
+        })
+  }
+
+  const documents = Object.values(separateOperations(data))
+
   graphql_invariant(
       documents.length,
       'There must be at least one operation document',
-      {
-        id,
-      },
+      { id },
   )
 
   return {

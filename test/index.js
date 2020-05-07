@@ -8,5 +8,7 @@ pipeline(
     },
 )
 
-import './operations.test.js'
-import './subscriptions.test.js'
+import './suites/operations.test.js'
+import './suites/subscriptions.test.js'
+import './suites/errors.test.js'
+import './suites/internal_errors.test.js'

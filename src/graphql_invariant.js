@@ -1,9 +1,7 @@
 import Processing_Error from './processing_error.js'
 import graphql from 'graphql'
 
-const {
-  GraphQLError,
-} = graphql
+const { GraphQLError } = graphql
 
 export default (
     condition,

@@ -2,9 +2,7 @@
 /* eslint-disable unicorn/custom-error-definition */
 import graphql from 'graphql'
 
-const {
-  GraphQLError,
-} = graphql
+const { GraphQLError } = graphql
 
 export default class Processing_Error extends GraphQLError {
   constructor({
