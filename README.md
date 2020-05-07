@@ -1,6 +1,7 @@
 <h1 align=center>@hydre/graphql-batch-executor</h1>
 <p align=center>
   <img src="https://img.shields.io/github/license/hydreio/graphql-batch-executor.svg?style=for-the-badge" />
+  <img src="https://img.shields.io/codecov/c/github/hydreio/graphql-batch-executor/edge?logo=codecov&style=for-the-badge"/>
   <a href="https://www.npmjs.com/package/@hydre/graphql-batch-executor">
     <img src="https://img.shields.io/npm/v/@hydre/graphql-batch-executor.svg?logo=npm&style=for-the-badge" />
   </a>
