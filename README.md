@@ -27,11 +27,9 @@ Initialize a new Executor per client
 import Executor from '@hydre/graphql-batch-executor'
 
 const executor = new Executor({
-  id: 'user_01', // identify the executor per client
   schema, // schema
   rootValue, // optionnal
   contextValue: {}, // optionnal
-  high_water_mark: 40, // handle backpressure for parallel operations
 })
 ```
 
@@ -41,16 +39,8 @@ The executor generator takes an option object
 import stream from 'stream'
 
 stream.pipeline(
-    function*() {
-      const query = {
-        id: 'an unique id for the query',
-        document: '{ ping }',
-        variables: {}
-      }
-
-      const another_query = {
-        id: 'another id',
-        document: `
+    executor.execute({
+      document: /* GraphQL */`
           query foo {
             ping
           }
@@ -59,48 +49,27 @@ stream.pipeline(
             ping
           }
         `,
-        variables: {}
-      }
-
-      yield* [query, another_query]
-    },
-
-    executor.generator.bind(executor), // the executor
-
-    async function (source) {
-      for await (const executed_operation of source) {
-
+      variables: {},
+    }),
+    async source => {
+      for await (const chunk of source) {
         const {
-          // this is how you differenciate queries
-          // as they run in parallel a new one may finish
-          // before an old one
-          id,
+          // query, mutation, subscription
+          operation_type,
 
-          // a unique stream for the operation
-          // each operation return a different stream
-          // this stream can be used to unsubscribe (by terminating it)
-          stream
-        }
+          // the name
+          // here we didn't defined any so it will
+          // default to 'anon'
+          // be careful as you will not be able to
+          // differenciate unamed queries
+          operation_name,
 
-        for await (const chunk of stream) {
-          const {
-            // query, mutation, subscription
-            operation_type,
+          // data result or null
+          data,
 
-            // the name
-            // here we didn't defined any so it will
-            // default to 'anon'
-            // be careful as you will not be able to
-            // differenciate unamed queries
-            operation_name,
-
-            // data result or null
-            data,
-
-            // gql errors or null
-            errors,
-          } = chunk
-        }
+          // gql errors or null
+          errors,
+        } = chunk
       }
     },
     () => {
