@@ -1,14 +1,12 @@
 import graphql from 'graphql'
-import Resolver from '../src/index.js'
+import Executor from '../src/index.js'
 import debug from 'debug'
 import { readFileSync } from 'fs'
 import {
   join, dirname,
 } from 'path'
 import { fileURLToPath } from 'url'
-import {
-  PassThrough, pipeline,
-} from 'stream'
+import { pipeline } from 'stream'
 
 const directory = dirname(fileURLToPath(import.meta.url))
 const log = debug('batch').extend('example')
@@ -30,29 +28,36 @@ const rootValue = {
     }
   },
 }
-const resolver = new Resolver({
-  id             : 'user_01',
+const executor = new Executor({
   contextValue   : {},
   high_water_mark: 40,
   schema,
   rootValue,
 })
-const batch_resolve = resolver.generate.bind(resolver)
-const client = new PassThrough({
-  objectMode   : true,
-  highWaterMark: 100,
-})
 
 // beware this exemple is synchrone
 pipeline(
-    client,
-    batch_resolve,
-    async function *(source) {
-      for await (const operation of source) {
-        log('processing %O', operation.id)
-        yield* operation.stream
+    executor.execute({
+      document: /* GraphQL */ `
+      query foo {
+        ping
+        peng: ping
       }
-    },
+
+      query bar {
+        ping
+      }
+
+      subscription workerA {
+        onEvent
+      }
+
+      subscription workerB {
+        onEvent
+      }
+    `,
+      variables: {},
+    }),
     async source => {
       for await (const chunk of source) {
         const {
@@ -71,26 +76,3 @@ pipeline(
       log('client stream terminated')
     },
 )
-
-client.write({
-  id      : 'example operation',
-  document: /* GraphQL */ `
-    query foo {
-      ping
-      peng: ping
-    }
-
-    query bar {
-      ping
-    }
-
-    subscription workerA {
-      onEvent
-    }
-
-    subscription workerB {
-      onEvent
-    }
-  `,
-  variables: {},
-})

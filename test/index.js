@@ -1,14 +1,16 @@
 import doubt from '@hydre/doubt'
+import reporter from 'tap-spec-emoji'
 import { pipeline } from 'stream'
-import tap_spec from 'tap-spec-emoji'
 
-pipeline(
-    doubt.stream(), tap_spec(), process.stdout, error => {
-      if (error) console.log(error)
-    },
-)
-
-import './suites/operations.test.js'
-import './suites/subscriptions.test.js'
-import './suites/errors.test.js'
-import './suites/internal_errors.test.js'
+import test_process_source from './suites/process_source.test.js'
+import test_executor from './suites/executor.test.js'
+;(async () => {
+  pipeline(
+      await doubt(test_process_source, test_executor),
+      reporter(),
+      process.stdout,
+      error => {
+        if (error) console.error(error)
+      },
+  )
+})()
