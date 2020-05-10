@@ -6,9 +6,7 @@ import {
   join, dirname,
 } from 'path'
 import { fileURLToPath } from 'url'
-import {
-  PassThrough, pipeline,
-} from 'stream'
+import { pipeline } from 'stream'
 
 const directory = dirname(fileURLToPath(import.meta.url))
 const log = debug('batch').extend('example')
@@ -40,24 +38,24 @@ const executor = new Executor({
 // beware this exemple is synchrone
 pipeline(
     executor.execute({
-      document: /* GraphQL */`
-        query foo {
-          ping
-          peng: ping
-        }
+      document: /* GraphQL */ `
+      query foo {
+        ping
+        peng: ping
+      }
 
-        query bar {
-          ping
-        }
+      query bar {
+        ping
+      }
 
-        subscription workerA {
-          onEvent
-        }
+      subscription workerA {
+        onEvent
+      }
 
-        subscription workerB {
-          onEvent
-        }
-      `,
+      subscription workerB {
+        onEvent
+      }
+    `,
       variables: {},
     }),
     async source => {
