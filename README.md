@@ -58,10 +58,8 @@ stream.pipeline(
           operation_type,
 
           // the name
-          // here we didn't defined any so it will
-          // default to 'anon'
-          // be careful as you will not be able to
-          // differenciate unamed queries
+          // note that you can't send queries
+          // without names if there are more than one
           operation_name,
 
           // data result or null
