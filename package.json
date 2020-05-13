@@ -5,7 +5,8 @@
   "main": "src/index.js",
   "type": "module",
   "scripts": {
-    "test": "c8 --check-coverage node test/index.js",
+    "test": "node test/index.js",
+    "coverage": "c8 --check-coverage node test/index.js",
     "lint": "prettier-eslint $PWD/\"**/*.js\" --list-different && eslint --color .",
     "format": "prettier-eslint $PWD/\"**/*.js\" --write",
     "example": "DEBUG='batch:example*' node example/index.js",
