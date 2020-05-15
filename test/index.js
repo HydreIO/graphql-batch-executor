@@ -6,7 +6,10 @@ import test_process_source from './suites/process_source.test.js'
 import test_executor from './suites/executor.test.js'
 ;(async () => {
   pipeline(
-      await doubt(test_process_source, test_executor),
+      await doubt(
+          test_process_source,
+          test_executor,
+      ),
       reporter(),
       process.stdout,
       error => {

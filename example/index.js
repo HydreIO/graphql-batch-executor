@@ -11,7 +11,13 @@ import { pipeline } from 'stream'
 const directory = dirname(fileURLToPath(import.meta.url))
 const log = debug('batch').extend('example')
 const { buildSchema } = graphql
-const schema = buildSchema(readFileSync(join(directory, 'schema.gql'), 'utf-8'))
+const schema = buildSchema(readFileSync(
+    join(
+        directory,
+        'schema.gql',
+    ),
+    'utf-8',
+))
 const interval = 500
 
 let event = 0
@@ -23,19 +29,21 @@ const rootValue = {
   },
   async *onEvent() {
     for (;;) {
-      await new Promise(resolve => setTimeout(resolve, interval))
+      await new Promise(resolve =>
+        setTimeout(
+            resolve,
+            interval,
+        ))
       yield { onEvent: ++event }
     }
   },
 }
 const executor = new Executor({
-  contextValue   : {},
-  high_water_mark: 40,
+  contextValue: {},
   schema,
   rootValue,
 })
 
-// beware this exemple is synchrone
 pipeline(
     executor.execute({
       document: /* GraphQL */ `
@@ -61,13 +69,28 @@ pipeline(
     async source => {
       for await (const chunk of source) {
         const {
-          operation_type, operation_name, data, errors,
+          operation_type,
+          operation_name,
+          data,
+          errors,
         } = chunk
 
-        log('operation_type %O', operation_type)
-        log('operation_name %O', operation_name)
-        log('data %O', data)
-        log('errors %O\n\n\n', errors)
+        log(
+            'operation_type %O',
+            operation_type,
+        )
+        log(
+            'operation_name %O',
+            operation_name,
+        )
+        log(
+            'data %O',
+            data,
+        )
+        log(
+            'errors %O\n\n\n',
+            errors,
+        )
 
         if (event >= max_event) return
       }

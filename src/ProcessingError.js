@@ -6,12 +6,15 @@ export default class ProcessingError extends Error {
     errors,
   }) {
     super('GraphQL processing error')
-    Object.assign(this, {
-      data,
-      errors,
-      operation_name,
-      operation_type,
-    })
+    Object.assign(
+        this,
+        {
+          data,
+          errors,
+          operation_name,
+          operation_type,
+        },
+    )
     this.name = 'ProcessingError'
   }
 }

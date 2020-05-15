@@ -36,7 +36,9 @@ export default class Executor {
    * Take an incomming query that may contains multiple bloc
    * and output processing datas for each bloc
    */
-  build_execution_contexts(documents, variableValues = {}) {
+  build_execution_contexts(
+      documents, variableValues = {},
+  ) {
     return documents.map(document => {
       const [operation] = document.definitions
       const {
@@ -56,9 +58,13 @@ export default class Executor {
     })
   }
 
-  static async execute_query(context, stream) {
+  static async execute_query(
+      context, stream,
+  ) {
     const {
-      operation_type, operation_name, ...execution_context
+      operation_type,
+      operation_name,
+      ...execution_context
     } = context
     const result = await graphql.execute(execution_context)
 
@@ -69,9 +75,13 @@ export default class Executor {
     })
   }
 
-  static async execute_subscription(context, stream) {
+  static async execute_subscription(
+      context, stream,
+  ) {
     const {
-      operation_type, operation_name, ...execution_context
+      operation_type,
+      operation_name,
+      ...execution_context
     } = context
     const result_or_iterator = await graphql.subscribe(execution_context)
 
@@ -109,20 +119,31 @@ export default class Executor {
     const through = new PassThrough({ objectMode: true })
 
     try {
-      const documents = process_source(this.#schema, document)
-      const execution_contexts = this.build_execution_contexts(documents,
-          variables)
+      const documents = process_source(
+          this.#schema,
+          document,
+      )
+      const execution_contexts = this.build_execution_contexts(
+          documents,
+          variables,
+      )
 
       execution_contexts.forEach(context => {
         switch (context.operation_type) {
           case 'subscription':
-            Executor.execute_subscription(context, through)
+            Executor.execute_subscription(
+                context,
+                through,
+            )
             break
 
           case 'query':
 
           case 'mutation':
-            Executor.execute_query(context, through)
+            Executor.execute_query(
+                context,
+                through,
+            )
 
             break
 

@@ -1,6 +1,5 @@
 import process_source from '../../src/process_source.js'
 import graphql from 'graphql'
-import { CallTracker } from 'assert'
 import { readFileSync } from 'fs'
 import { fileURLToPath } from 'url'
 import {
@@ -9,26 +8,27 @@ import {
 
 const { buildSchema } = graphql
 const directory = dirname(fileURLToPath(import.meta.url))
-const file = readFileSync(join(directory, './schema.gql'), 'utf-8')
+const file = readFileSync(
+    join(
+        directory,
+        './schema.gql',
+    ),
+    'utf-8',
+)
 const schema = buildSchema(file)
 
 export default class {
   static name = 'source processing'
 
-  #tracker = new CallTracker()
-
-  constructor(cleanup) {
-    cleanup(() => {
-      this.#tracker.verify()
-    })
-  }
-
-  input(assert) {
-    const affirm = this.#tracker.calls(assert, 4)
+  static input(assert) {
+    const affirm = assert(4)
     const no_document = 'Missing operation document'
-    const bad_document = 'Syntax Error: Unexpected Name "invalid".'
-    const invalid_schema = 'Expected {} to be a GraphQL schema.'
-    const not_in_schema = 'Cannot query field "thanos" on type "Query".'
+    const bad_document
+      = 'Syntax Error: Unexpected Name "invalid".'
+    const invalid_schema
+      = 'Expected {} to be a GraphQL schema.'
+    const not_in_schema
+      = 'Cannot query field "thanos" on type "Query".'
 
     try {
       process_source(schema)
@@ -42,7 +42,10 @@ export default class {
     }
 
     try {
-      process_source(schema, 'invalid')
+      process_source(
+          schema,
+          'invalid',
+      )
     } catch (error) {
       affirm({
         that   : 'processing source',
@@ -53,7 +56,10 @@ export default class {
     }
 
     try {
-      process_source({}, '{ ping }')
+      process_source(
+          {},
+          '{ ping }',
+      )
     } catch (error) {
       affirm({
         that   : 'processing source',
@@ -64,7 +70,10 @@ export default class {
     }
 
     try {
-      process_source(schema, '{ thanos }')
+      process_source(
+          schema,
+          '{ thanos }',
+      )
     } catch (error) {
       affirm({
         that   : 'processing source',

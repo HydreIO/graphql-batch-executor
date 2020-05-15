@@ -6,7 +6,12 @@ const {
 } = graphql
 const parse_or_errors = document => {
   try {
-    return { data: parse(document, { noLocation: true }) }
+    return {
+      data: parse(
+          document,
+          { noLocation: true },
+      ),
+    }
   } catch (error) {
     return { errors: [error] }
   }
@@ -17,8 +22,11 @@ const parse_or_errors = document => {
  * @returns an array of documents
  * @throws a ProcessingError if the operation is invalid somehow
  */
-export default (schema, document) => {
-  if (!document) throw new Error('Missing operation document')
+export default (
+    schema, document,
+) => {
+  if (!document)
+    throw new Error('Missing operation document')
 
   const {
     data, errors,
@@ -32,7 +40,10 @@ export default (schema, document) => {
     })
   }
 
-  const validation_errors = validate(schema, data)
+  const validation_errors = validate(
+      schema,
+      data,
+  )
 
   if (validation_errors?.length) {
     throw new ProcessingError({

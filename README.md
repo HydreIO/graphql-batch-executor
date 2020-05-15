@@ -9,7 +9,7 @@
   <img src="https://img.shields.io/github/workflow/status/hydreio/graphql-batch-executor/CI?logo=Github&style=for-the-badge" />
 </p>
 
-<h3 align=center>A transform stream executing multiple graphql operations in parallel</h3>
+<h3 align=center>A readable stream executing multiple graphql operations in parallel</h3>
 
 This library is made to be used by servers or tools implementer, it can't be used alone.
 
