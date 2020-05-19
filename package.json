@@ -36,7 +36,7 @@
   },
   "devDependencies": {
     "@hydre/doubt": "^6.1.0",
-    "@sidy/eslint-config-sidy": "^1.4.6",
+    "@sidy/eslint-config-sidy": "^1.4.10",
     "babel-eslint": "^10.1.0",
     "c8": "^7.1.2",
     "eslint": "^7.0.0",

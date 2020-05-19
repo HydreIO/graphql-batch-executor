@@ -1,16 +1,11 @@
 import graphql from 'graphql'
 import ProcessingError from './ProcessingError.js'
 
-const {
-  separateOperations, parse, validate,
-} = graphql
+const { separateOperations, parse, validate } = graphql
 const parse_or_errors = document => {
   try {
     return {
-      data: parse(
-          document,
-          { noLocation: true },
-      ),
+      data: parse(document, { noLocation: true }),
     }
   } catch (error) {
     return { errors: [error] }
@@ -22,15 +17,11 @@ const parse_or_errors = document => {
  * @returns an array of documents
  * @throws a ProcessingError if the operation is invalid somehow
  */
-export default (
-    schema, document,
-) => {
+export default (schema, document) => {
   if (!document)
     throw new Error('Missing operation document')
 
-  const {
-    data, errors,
-  } = parse_or_errors(document)
+  const { data, errors } = parse_or_errors(document)
 
   if (errors?.length) {
     throw new ProcessingError({
@@ -40,10 +31,7 @@ export default (
     })
   }
 
-  const validation_errors = validate(
-      schema,
-      data,
-  )
+  const validation_errors = validate(schema, data)
 
   if (validation_errors?.length) {
     throw new ProcessingError({

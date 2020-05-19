@@ -2,17 +2,12 @@ import process_source from '../../src/process_source.js'
 import graphql from 'graphql'
 import { readFileSync } from 'fs'
 import { fileURLToPath } from 'url'
-import {
-  join, dirname,
-} from 'path'
+import { join, dirname } from 'path'
 
 const { buildSchema } = graphql
 const directory = dirname(fileURLToPath(import.meta.url))
 const file = readFileSync(
-    join(
-        directory,
-        './schema.gql',
-    ),
+    join(directory, './schema.gql'),
     'utf-8',
 )
 const schema = buildSchema(file)
@@ -42,10 +37,7 @@ export default class {
     }
 
     try {
-      process_source(
-          schema,
-          'invalid',
-      )
+      process_source(schema, 'invalid')
     } catch (error) {
       affirm({
         that   : 'processing source',
@@ -56,10 +48,7 @@ export default class {
     }
 
     try {
-      process_source(
-          {},
-          '{ ping }',
-      )
+      process_source({}, '{ ping }')
     } catch (error) {
       affirm({
         that   : 'processing source',
@@ -70,10 +59,7 @@ export default class {
     }
 
     try {
-      process_source(
-          schema,
-          '{ thanos }',
-      )
+      process_source(schema, '{ thanos }')
     } catch (error) {
       affirm({
         that   : 'processing source',

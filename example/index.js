@@ -2,22 +2,14 @@ import graphql from 'graphql'
 import Executor from '../src/index.js'
 import debug from 'debug'
 import { readFileSync } from 'fs'
-import {
-  join, dirname,
-} from 'path'
+import { join, dirname } from 'path'
 import { fileURLToPath } from 'url'
 import { pipeline } from 'stream'
 
 const directory = dirname(fileURLToPath(import.meta.url))
 const log = debug('batch').extend('example')
 const { buildSchema } = graphql
-const schema = buildSchema(readFileSync(
-    join(
-        directory,
-        'schema.gql',
-    ),
-    'utf-8',
-))
+const schema = buildSchema(readFileSync(join(directory, 'schema.gql'), 'utf-8'))
 const interval = 500
 
 let event = 0
@@ -30,10 +22,7 @@ const rootValue = {
   async *onEvent() {
     for (;;) {
       await new Promise(resolve =>
-        setTimeout(
-            resolve,
-            interval,
-        ))
+        setTimeout(resolve, interval))
       yield { onEvent: ++event }
     }
   },
@@ -75,22 +64,10 @@ pipeline(
           errors,
         } = chunk
 
-        log(
-            'operation_type %O',
-            operation_type,
-        )
-        log(
-            'operation_name %O',
-            operation_name,
-        )
-        log(
-            'data %O',
-            data,
-        )
-        log(
-            'errors %O\n\n\n',
-            errors,
-        )
+        log('operation_type %O', operation_type)
+        log('operation_name %O', operation_name)
+        log('data %O', data)
+        log('errors %O\n\n\n', errors)
 
         if (event >= max_event) return
       }

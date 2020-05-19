@@ -4,19 +4,12 @@ import stream from 'stream'
 import { promisify } from 'util'
 import { readFileSync } from 'fs'
 import { fileURLToPath } from 'url'
-import {
-  join, dirname,
-} from 'path'
+import { join, dirname } from 'path'
 
-const {
-  buildSchema, GraphQLError,
-} = graphql
+const { buildSchema, GraphQLError } = graphql
 const directory = dirname(fileURLToPath(import.meta.url))
 const file = readFileSync(
-    join(
-        directory,
-        './schema.gql',
-    ),
+    join(directory, './schema.gql'),
     'utf-8',
 )
 const schema = buildSchema(file)
@@ -33,24 +26,16 @@ export default class {
     rootValue   : {
       async ping() {
         await new Promise(resolve =>
-          setTimeout(
-              resolve,
-              10,
-          ))
+          setTimeout(resolve, 10))
         return 'chong'
       },
-      me(
-          _, { name },
-      ) {
+      me(_, { name }) {
         return { name }
       },
       async *infinite() {
         for (;;) {
           await new Promise(resolve =>
-            setTimeout(
-                resolve,
-                1,
-            ))
+            setTimeout(resolve, 1))
           yield { infinite: true }
         }
       },
@@ -178,33 +163,30 @@ export default class {
 
     let count = 0
 
-    await pipeline(
-        execution,
-        async source => {
-          for await (const chunk of source) {
-            affirm({
-              that   : 'no errors',
-              should : 'be thrown',
-              because: chunk.errors,
-              is     : undefined,
-            })
-            affirm({
-              that   : 'a subscription',
-              should : 'keep executing until we end the stream',
-              because: {
-                ...chunk,
-                data: { ...chunk.data },
-              },
-              is: {
-                operation_name: 'anon',
-                operation_type: 'subscription',
-                data          : { infinite: true },
-              },
-            })
-            if (++count >= 3) source.end()
-          }
-        },
-    )
+    await pipeline(execution, async source => {
+      for await (const chunk of source) {
+        affirm({
+          that   : 'no errors',
+          should : 'be thrown',
+          because: chunk.errors,
+          is     : undefined,
+        })
+        affirm({
+          that   : 'a subscription',
+          should : 'keep executing until we end the stream',
+          because: {
+            ...chunk,
+            data: { ...chunk.data },
+          },
+          is: {
+            operation_name: 'anon',
+            operation_type: 'subscription',
+            data          : { infinite: true },
+          },
+        })
+        if (++count >= 3) source.end()
+      }
+    })
 
     await finished(execution)
     affirm({

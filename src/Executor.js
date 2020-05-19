@@ -1,8 +1,6 @@
 import graphql from 'graphql'
 import process_source from './process_source.js'
-import {
-  PassThrough, pipeline as pipe,
-} from 'stream'
+import { PassThrough, pipeline as pipe } from 'stream'
 import { promisify } from 'util'
 
 const pipeline = promisify(pipe)
@@ -36,9 +34,7 @@ export default class Executor {
    * Take an incomming query that may contains multiple bloc
    * and output processing datas for each bloc
    */
-  build_execution_contexts(
-      documents, variableValues = {},
-  ) {
+  build_execution_contexts(documents, variableValues = {}) {
     return documents.map(document => {
       const [operation] = document.definitions
       const {
@@ -58,9 +54,7 @@ export default class Executor {
     })
   }
 
-  static async execute_query(
-      context, stream,
-  ) {
+  static async execute_query(context, stream) {
     const {
       operation_type,
       operation_name,
@@ -75,9 +69,7 @@ export default class Executor {
     })
   }
 
-  static async execute_subscription(
-      context, stream,
-  ) {
+  static async execute_subscription(context, stream) {
     const {
       operation_type,
       operation_name,
@@ -113,9 +105,7 @@ export default class Executor {
    * and execute them in parallel, then stream back each results
    * as soon as possible
    */
-  execute({
-    document, variables,
-  } = {}) {
+  execute({ document, variables } = {}) {
     const through = new PassThrough({ objectMode: true })
 
     try {
@@ -131,19 +121,13 @@ export default class Executor {
       execution_contexts.forEach(context => {
         switch (context.operation_type) {
           case 'subscription':
-            Executor.execute_subscription(
-                context,
-                through,
-            )
+            Executor.execute_subscription(context, through)
             break
 
           case 'query':
 
           case 'mutation':
-            Executor.execute_query(
-                context,
-                through,
-            )
+            Executor.execute_query(context, through)
 
             break
 
