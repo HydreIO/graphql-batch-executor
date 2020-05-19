@@ -1,6 +1,6 @@
 {
   "name": "@hydre/graphql-batch-executor",
-  "version": "1.2.3",
+  "version": "1.2.4",
   "description": "A transform stream executing multiple graphql operations in parallel",
   "main": "src/index.js",
   "type": "module",
