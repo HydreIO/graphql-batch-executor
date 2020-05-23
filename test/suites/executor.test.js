@@ -19,8 +19,8 @@ export default class {
 
   #executor = new Executor({
     schema,
-    context  : { name: 'pepeg' },
-    queryRoot: {
+    context: { name: 'pepeg' },
+    query  : {
       async ping() {
         await new Promise(resolve => setTimeout(resolve, 10))
         return 'chong'
@@ -29,10 +29,10 @@ export default class {
         return { name }
       },
     },
-    mutationRoot: {
+    mutation: {
       do_stuff: 'pepo',
     },
-    subscriptionRoot: {
+    subscription: {
       async *infinite() {
         for (;;) {
           await new Promise(resolve => setTimeout(resolve, 1))

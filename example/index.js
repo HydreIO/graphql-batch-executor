@@ -16,14 +16,14 @@ let event = 0
 
 const max_event = 3
 const executor = new Executor({
-  contextValue: {},
+  context: {},
   schema,
-  queryRoot   : {
+  query  : {
     ping() {
       return 'pong chin chan'
     },
   },
-  subscriptionRoot: {
+  subscription: {
     async *onEvent() {
       for (;;) {
         await new Promise(resolve => setTimeout(resolve, interval))

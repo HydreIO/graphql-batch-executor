@@ -28,10 +28,10 @@ import Executor from '@hydre/graphql-batch-executor'
 
 const executor = new Executor({
   schema, // schema
-  queryRoot,
-  mutationRoot,
-  subscriptionRoot,
-  contextValue: {}, // optionnal
+  query,
+  mutation,
+  subscription,
+  context: {}, // optionnal
 })
 ```
 

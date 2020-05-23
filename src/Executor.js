@@ -18,23 +18,23 @@ export default class Executor {
    * @param {Object} options
    * @param {graphql.SchemaDefinitionNode} options.schema the graphql schema
    * @param {Object} options.context the graphql context
-   * @param {Object} options.queryRoot the query root value
-   * @param {Object} options.mutationRoot the mutation root value
-   * @param {Object} options.subscriptionRoot the subscription root value
+   * @param {Object} options.query the query root value
+   * @param {Object} options.mutation the mutation root value
+   * @param {Object} options.subscription the subscription root value
    */
   constructor({
     schema = (() => {
       throw new Error('Schema must be defined')
     })(),
     context = {},
-    queryRoot = {},
-    mutationRoot = {},
-    subscriptionRoot = {},
+    query = {},
+    mutation = {},
+    subscription = {},
   } = {}) {
     this.#schema = schema
-    this.#queryRoot = queryRoot
-    this.#mutationRoot = mutationRoot
-    this.#subscriptionRoot = subscriptionRoot
+    this.#queryRoot = query
+    this.#mutationRoot = mutation
+    this.#subscriptionRoot = subscription
     this.#contextValue = context
   }
 
