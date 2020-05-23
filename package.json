@@ -41,7 +41,6 @@
   },
   "homepage": "https://github.com/hydreio/graphql-batch-executor#readme",
   "dependencies": {
-    "@babel/plugin-syntax-import-meta": "^7.8.3",
     "debug": "^4.1.1",
     "graphql": "^15.0.0"
   },
@@ -49,6 +48,7 @@
     "@babel/core": "^7.9.6",
     "@babel/plugin-proposal-class-properties": "^7.8.3",
     "@babel/plugin-proposal-numeric-separator": "^7.8.3",
+    "@babel/plugin-syntax-import-meta": "^7.8.3",
     "@hydre/doubt": "^6.1.0",
     "@sidy/eslint-config-sidy": "^1.4.10",
     "babel-eslint": "^11.0.0-beta.2",
