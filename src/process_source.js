@@ -18,8 +18,7 @@ const parse_or_errors = document => {
  * @throws a ProcessingError if the operation is invalid somehow
  */
 export default (schema, document) => {
-  if (!document)
-    throw new Error('Missing operation document')
+  if (!document) throw new Error('Missing operation document')
 
   const { data, errors } = parse_or_errors(document)
 

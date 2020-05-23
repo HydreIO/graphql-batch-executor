@@ -6,10 +6,7 @@ import { join, dirname } from 'path'
 
 const { buildSchema } = graphql
 const directory = dirname(fileURLToPath(import.meta.url))
-const file = readFileSync(
-    join(directory, './schema.gql'),
-    'utf-8',
-)
+const file = readFileSync(join(directory, './schema.gql'), 'utf-8')
 const schema = buildSchema(file)
 
 export default class {
@@ -18,12 +15,9 @@ export default class {
   static input(assert) {
     const affirm = assert(4)
     const no_document = 'Missing operation document'
-    const bad_document
-      = 'Syntax Error: Unexpected Name "invalid".'
-    const invalid_schema
-      = 'Expected {} to be a GraphQL schema.'
-    const not_in_schema
-      = 'Cannot query field "thanos" on type "Query".'
+    const bad_document = 'Syntax Error: Unexpected Name "invalid".'
+    const invalid_schema = 'Expected {} to be a GraphQL schema.'
+    const not_in_schema = 'Cannot query field "thanos" on type "Query".'
 
     try {
       process_source(schema)

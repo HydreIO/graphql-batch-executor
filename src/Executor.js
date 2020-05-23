@@ -7,7 +7,9 @@ const pipeline = promisify(pipe)
 
 export default class Executor {
   #schema
-  #rootValue
+  #queryRoot
+  #mutationRoot
+  #subscriptionRoot
   #contextValue
 
   /**
@@ -15,19 +17,25 @@ export default class Executor {
    * each operation in parallel
    * @param {Object} options
    * @param {graphql.SchemaDefinitionNode} options.schema the graphql schema
-   * @param {Object} options.contextValue the graphql context
-   * @param {Object} options.rootValue the resolvers
+   * @param {Object} options.context the graphql context
+   * @param {Object} options.queryRoot the query root value
+   * @param {Object} options.mutationRoot the mutation root value
+   * @param {Object} options.subscriptionRoot the subscription root value
    */
   constructor({
     schema = (() => {
       throw new Error('Schema must be defined')
     })(),
-    contextValue = {},
-    rootValue = {},
+    context = {},
+    queryRoot = {},
+    mutationRoot = {},
+    subscriptionRoot = {},
   } = {}) {
     this.#schema = schema
-    this.#rootValue = rootValue
-    this.#contextValue = contextValue
+    this.#queryRoot = queryRoot
+    this.#mutationRoot = mutationRoot
+    this.#subscriptionRoot = subscriptionRoot
+    this.#contextValue = context
   }
 
   /**
@@ -47,20 +55,37 @@ export default class Executor {
         operation_name,
         document,
         schema      : this.#schema,
-        rootValue   : this.#rootValue,
         contextValue: this.#contextValue,
         variableValues,
       }
     })
   }
 
-  static async execute_query(context, stream) {
-    const {
-      operation_type,
-      operation_name,
-      ...execution_context
-    } = context
-    const result = await graphql.execute(execution_context)
+  get_root_value(type) {
+    switch (type) {
+      case 'query':
+        return this.#queryRoot
+
+      case 'mutation':
+        return this.#mutationRoot
+
+      case 'subscription':
+        return this.#subscriptionRoot
+
+      /* c8 ignore next 3 */
+      // not reachable
+      default:
+        return undefined
+    }
+  }
+
+  async execute_query(context, stream) {
+    const { operation_type, operation_name, ...execution_context } = context
+    const rootValue = this.get_root_value(operation_type, execution_context)
+    const result = await graphql.execute({
+      ...execution_context,
+      rootValue,
+    })
 
     stream.write({
       operation_type,
@@ -69,13 +94,13 @@ export default class Executor {
     })
   }
 
-  static async execute_subscription(context, stream) {
-    const {
-      operation_type,
-      operation_name,
-      ...execution_context
-    } = context
-    const result_or_iterator = await graphql.subscribe(execution_context)
+  async execute_subscription(context, stream) {
+    const { operation_type, operation_name, ...execution_context } = context
+    const rootValue = this.get_root_value(operation_type, execution_context)
+    const result_or_iterator = await graphql.subscribe({
+      ...execution_context,
+      rootValue,
+    })
 
     if (result_or_iterator[Symbol.asyncIterator]) {
       await pipeline(
@@ -109,10 +134,7 @@ export default class Executor {
     const through = new PassThrough({ objectMode: true })
 
     try {
-      const documents = process_source(
-          this.#schema,
-          document,
-      )
+      const documents = process_source(this.#schema, document)
       const execution_contexts = this.build_execution_contexts(
           documents,
           variables,
@@ -121,13 +143,13 @@ export default class Executor {
       execution_contexts.forEach(context => {
         switch (context.operation_type) {
           case 'subscription':
-            Executor.execute_subscription(context, through)
+            this.execute_subscription(context, through)
             break
 
           case 'query':
 
           case 'mutation':
-            Executor.execute_query(context, through)
+            this.execute_query(context, through)
 
             break
 

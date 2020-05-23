@@ -3,6 +3,10 @@
     me: User!
   }
 
+  type Mutation {
+    do_stuff: String!
+  }
+
   type User {
     name: String!
   }

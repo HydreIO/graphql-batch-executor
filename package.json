@@ -7,8 +7,8 @@
   "scripts": {
     "test": "node test/index.js",
     "coverage": "c8 --check-coverage node test/index.js",
-    "lint": "prettier-eslint $PWD/\"**/*.js\" --print-width 60 --list-different && eslint --color .",
-    "format": "prettier-eslint $PWD/\"**/*.js\" --print-width 60 --write",
+    "lint": "prettier-eslint $PWD/\"**/*.js\" --print-width 80 --list-different && eslint --color .",
+    "format": "prettier-eslint $PWD/\"**/*.js\" --print-width 80 --write",
     "example": "DEBUG='batch:example*' node example/index.js",
     "postversion": "git push && git push --tags"
   },
@@ -26,20 +26,34 @@
     "executor",
     "batch"
   ],
+  "babel": {
+    "parserOpts": {
+      "allowAwaitOutsideFunction": true
+    },
+    "plugins": [
+      "@babel/plugin-proposal-class-properties",
+      "@babel/plugin-proposal-numeric-separator",
+      "@babel/plugin-syntax-import-meta"
+    ]
+  },
   "publishConfig": {
     "access": "public"
   },
   "homepage": "https://github.com/hydreio/graphql-batch-executor#readme",
   "dependencies": {
+    "@babel/plugin-syntax-import-meta": "^7.8.3",
     "debug": "^4.1.1",
     "graphql": "^15.0.0"
   },
   "devDependencies": {
+    "@babel/core": "^7.9.6",
+    "@babel/plugin-proposal-class-properties": "^7.8.3",
+    "@babel/plugin-proposal-numeric-separator": "^7.8.3",
     "@hydre/doubt": "^6.1.0",
     "@sidy/eslint-config-sidy": "^1.4.10",
-    "babel-eslint": "^10.1.0",
+    "babel-eslint": "^11.0.0-beta.2",
     "c8": "^7.1.2",
-    "eslint": "^7.0.0",
+    "eslint": "^7.1.0",
     "eslint-plugin-unicorn": "^20.0.0",
     "prettier-eslint-cli": "^5.0.0",
     "supports-color": "^7.1.0",

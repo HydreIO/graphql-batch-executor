@@ -8,10 +8,7 @@ import { join, dirname } from 'path'
 
 const { buildSchema, GraphQLError } = graphql
 const directory = dirname(fileURLToPath(import.meta.url))
-const file = readFileSync(
-    join(directory, './schema.gql'),
-    'utf-8',
-)
+const file = readFileSync(join(directory, './schema.gql'), 'utf-8')
 const schema = buildSchema(file)
 const pipeline = promisify(stream.pipeline)
 const finished = promisify(stream.finished)
@@ -22,20 +19,23 @@ export default class {
 
   #executor = new Executor({
     schema,
-    contextValue: { name: 'pepeg' },
-    rootValue   : {
+    context  : { name: 'pepeg' },
+    queryRoot: {
       async ping() {
-        await new Promise(resolve =>
-          setTimeout(resolve, 10))
+        await new Promise(resolve => setTimeout(resolve, 10))
         return 'chong'
       },
       me(_, { name }) {
         return { name }
       },
+    },
+    mutationRoot: {
+      do_stuff: 'pepo',
+    },
+    subscriptionRoot: {
       async *infinite() {
         for (;;) {
-          await new Promise(resolve =>
-            setTimeout(resolve, 1))
+          await new Promise(resolve => setTimeout(resolve, 1))
           yield { infinite: true }
         }
       },
@@ -100,9 +100,8 @@ export default class {
         async source => {
           for await (const chunk of source) {
             affirm({
-              that  : 'executing',
-              should:
-              'forward a graphqlError if the document is invalid',
+              that   : 'executing',
+              should : 'forward a graphqlError if the document is invalid',
               because: chunk.errors[0].message,
               is     : 'Syntax Error: Unexpected Name "invalid".',
             })
@@ -113,14 +112,31 @@ export default class {
   }
 
   async queries(assert) {
-    const affirm = assert(4)
+    const affirm = assert(5)
 
     let count = 0
 
     await pipeline(
         this.#executor.execute({
-          document:
-          'query uno { me { name } } query dos { ping }',
+          document : 'mutation { do_stuff }',
+          variables: { foo: 1 },
+        }),
+        async source => {
+          for await (const chunk of source) {
+            affirm({
+              that   : 'a mutation',
+              should : 'use the mutation root value',
+              because: chunk.data.do_stuff,
+              is     : 'pepo',
+            })
+            source.end()
+          }
+        },
+    )
+
+    await pipeline(
+        this.#executor.execute({
+          document : 'query uno { me { name } } query dos { ping }',
           variables: { foo: 1 },
         }),
         async source => {
