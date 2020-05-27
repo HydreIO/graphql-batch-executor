@@ -1,3 +1,4 @@
+/* eslint-disable max-lines */
 import Executor from '../../src/index.js'
 import graphql from 'graphql'
 import stream from 'stream'
@@ -20,11 +21,12 @@ export default class {
   #executor = new Executor({
     schema,
     context    : () => ({ name: 'pepeg' }),
-    formatError: errors => errors.map(error => {
-      console.log('checking', error.message)
-      if (error.message.includes('N WORD')) error.message = 'censored'
-      return error
-    }),
+    formatError: errors =>
+      errors.map(error => {
+        console.log('checking', error.message)
+        if (error.message.includes('N WORD')) error.message = 'censored'
+        return error
+      }),
     query: {
       async ping() {
         await new Promise(resolve => setTimeout(resolve, 10))

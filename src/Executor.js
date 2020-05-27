@@ -28,7 +28,7 @@ export default class Executor {
     schema = (() => {
       throw new Error('Schema must be defined')
     })(),
-    context = () => { },
+    context = () => {},
     formatError = x => x,
     query = {},
     mutation = {},
