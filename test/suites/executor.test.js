@@ -19,8 +19,13 @@ export default class {
 
   #executor = new Executor({
     schema,
-    context: () => ({ name: 'pepeg' }),
-    query  : {
+    context    : () => ({ name: 'pepeg' }),
+    formatError: errors => errors.map(error => {
+      console.log('checking', error.message)
+      if (error.message.includes('N WORD')) error.message = 'censored'
+      return error
+    }),
+    query: {
       async ping() {
         await new Promise(resolve => setTimeout(resolve, 10))
         return 'chong'
@@ -40,7 +45,7 @@ export default class {
         }
       },
       async pingCount() {
-        throw new GraphQLError('oopsy')
+        throw new GraphQLError('going to say the N WORD !')
       },
     },
   })
@@ -71,7 +76,7 @@ export default class {
               that   : 'no errors',
               should : 'be thrown',
               because: chunk.errors,
-              is     : undefined,
+              is     : [],
             })
             source.end()
           }
@@ -88,7 +93,7 @@ export default class {
               that   : 'a subscription resolver',
               should : 'forward a graphqlError if thrown',
               because: chunk.errors[0].message,
-              is     : 'oopsy',
+              is     : 'censored',
             })
             source.end()
           }
@@ -145,7 +150,7 @@ export default class {
               that   : 'no errors',
               should : 'be thrown',
               because: chunk.errors,
-              is     : undefined,
+              is     : [],
             })
             if (count === 0) {
               affirm({
@@ -185,7 +190,7 @@ export default class {
           that   : 'no errors',
           should : 'be thrown',
           because: chunk.errors,
-          is     : undefined,
+          is     : [],
         })
         affirm({
           that   : 'a subscription',
@@ -197,6 +202,7 @@ export default class {
           is: {
             operation_name: 'anon',
             operation_type: 'subscription',
+            errors        : [],
             data          : { infinite: true },
           },
         })

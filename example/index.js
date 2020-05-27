@@ -16,9 +16,10 @@ let event = 0
 
 const max_event = 3
 const executor = new Executor({
-  context: () => ({}),
+  context    : () => ({}),
+  formatError: x => x,
   schema,
-  query  : {
+  query      : {
     ping() {
       return 'pong chin chan'
     },

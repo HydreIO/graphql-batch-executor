@@ -11,6 +11,7 @@ export default class Executor {
   #mutationRoot
   #subscriptionRoot
   #contextValue
+  #formatError
 
   /**
    * A batch executor which provide a generator yielding
@@ -18,6 +19,7 @@ export default class Executor {
    * @param {Object} options
    * @param {graphql.SchemaDefinitionNode} options.schema the graphql schema
    * @param {(Object|Function)} options.context the graphql context
+   * @param {Function} options.formatError a mapper function to customize errors
    * @param {Object} options.query the query root value
    * @param {Object} options.mutation the mutation root value
    * @param {Object} options.subscription the subscription root value
@@ -26,7 +28,8 @@ export default class Executor {
     schema = (() => {
       throw new Error('Schema must be defined')
     })(),
-    context = () => {},
+    context = () => { },
+    formatError = x => x,
     query = {},
     mutation = {},
     subscription = {},
@@ -36,6 +39,7 @@ export default class Executor {
     this.#mutationRoot = mutation
     this.#subscriptionRoot = subscription
     this.#contextValue = context
+    this.#formatError = formatError
   }
 
   /**
@@ -87,7 +91,7 @@ export default class Executor {
   async execute_query(context, stream) {
     const { operation_type, operation_name, ...execution_context } = context
     const rootValue = this.get_root_value(operation_type, execution_context)
-    const result = await graphql.execute({
+    const { data, errors = [] } = await graphql.execute({
       ...execution_context,
       rootValue,
     })
@@ -95,7 +99,8 @@ export default class Executor {
     stream.write({
       operation_type,
       operation_name,
-      ...result,
+      data,
+      errors: this.#formatError(errors),
     })
   }
 
@@ -106,14 +111,16 @@ export default class Executor {
       ...execution_context,
       rootValue,
     })
+    const format = this.#formatError
 
     if (result_or_iterator[Symbol.asyncIterator]) {
       await pipeline(
           result_or_iterator,
           async function *(source) {
-            for await (const chunk of source) {
+            for await (const { data, errors = [] } of source) {
               yield {
-                ...chunk,
+                data,
+                errors: format(errors),
                 operation_type,
                 operation_name,
               }
@@ -122,10 +129,13 @@ export default class Executor {
           stream,
       )
     } else {
+      const { data, errors = [] } = result_or_iterator
+
       stream.write({
         operation_type,
         operation_name,
-        ...result_or_iterator,
+        data,
+        errors: format(errors),
       })
     }
   }

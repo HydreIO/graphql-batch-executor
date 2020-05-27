@@ -31,7 +31,8 @@ const executor = new Executor({
   query,
   mutation,
   subscription,
-  context: async () => ({})
+  context: async () => ({}),
+  formatError: x => x // format array of errors
 })
 ```
 
@@ -41,7 +42,7 @@ The executor generator takes an option object
 import stream from 'stream'
 
 stream.pipeline(
-    executor.execute()({
+    executor.execute({
       document: /* GraphQL */`
           query foo {
             ping
@@ -67,7 +68,7 @@ stream.pipeline(
           // data result or null
           data,
 
-          // gql errors or null
+          // gql errors or []
           errors,
         } = chunk
       }
