@@ -43,7 +43,8 @@ export default class Executor {
    * and output processing datas for each bloc
    */
   async build_execution_contexts(documents, variableValues = {}) {
-    const contextValue = typeof this.#contextValue === 'function'
+    const contextValue
+      = typeof this.#contextValue === 'function'
         ? await this.#contextValue()
         : this.#contextValue
 
