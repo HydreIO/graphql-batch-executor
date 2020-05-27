@@ -19,7 +19,7 @@ export default class {
 
   #executor = new Executor({
     schema,
-    context: { name: 'pepeg' },
+    context: () => ({ name: 'pepeg' }),
     query  : {
       async ping() {
         await new Promise(resolve => setTimeout(resolve, 10))
@@ -62,7 +62,7 @@ export default class {
     }
 
     await pipeline(
-        this.#executor.execute({
+        await this.#executor.execute({
           document: 'subscription { infinite }',
         }),
         async source => {
@@ -79,7 +79,7 @@ export default class {
     )
 
     await pipeline(
-        this.#executor.execute({
+        await this.#executor.execute({
           document: 'subscription { pingCount }',
         }),
         async source => {
@@ -96,7 +96,7 @@ export default class {
     )
 
     await pipeline(
-        this.#executor.execute({ document: 'invalid' }),
+        await this.#executor.execute({ document: 'invalid' }),
         async source => {
           for await (const chunk of source) {
             affirm({
@@ -117,7 +117,7 @@ export default class {
     let count = 0
 
     await pipeline(
-        this.#executor.execute({
+        await this.#executor.execute({
           document : 'mutation { do_stuff }',
           variables: { foo: 1 },
         }),
@@ -135,7 +135,7 @@ export default class {
     )
 
     await pipeline(
-        this.#executor.execute({
+        await this.#executor.execute({
           document : 'query uno { me { name } } query dos { ping }',
           variables: { foo: 1 },
         }),
@@ -172,7 +172,7 @@ export default class {
 
   async subscriptions(assert) {
     const affirm = assert(7)
-    const execution = this.#executor.execute({
+    const execution = await this.#executor.execute({
       document : 'subscription { infinite }',
       variables: { foo: true },
     })

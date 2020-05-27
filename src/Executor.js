@@ -17,7 +17,7 @@ export default class Executor {
    * each operation in parallel
    * @param {Object} options
    * @param {graphql.SchemaDefinitionNode} options.schema the graphql schema
-   * @param {Object} options.context the graphql context
+   * @param {(Object|Function)} options.context the graphql context
    * @param {Object} options.query the query root value
    * @param {Object} options.mutation the mutation root value
    * @param {Object} options.subscription the subscription root value
@@ -26,7 +26,7 @@ export default class Executor {
     schema = (() => {
       throw new Error('Schema must be defined')
     })(),
-    context = {},
+    context = () => {},
     query = {},
     mutation = {},
     subscription = {},
@@ -42,7 +42,11 @@ export default class Executor {
    * Take an incomming query that may contains multiple bloc
    * and output processing datas for each bloc
    */
-  build_execution_contexts(documents, variableValues = {}) {
+  async build_execution_contexts(documents, variableValues = {}) {
+    const contextValue = typeof this.#contextValue === 'function'
+        ? await this.#contextValue()
+        : this.#contextValue
+
     return documents.map(document => {
       const [operation] = document.definitions
       const {
@@ -54,8 +58,8 @@ export default class Executor {
         operation_type,
         operation_name,
         document,
-        schema      : this.#schema,
-        contextValue: this.#contextValue,
+        schema: this.#schema,
+        contextValue,
         variableValues,
       }
     })
@@ -130,12 +134,12 @@ export default class Executor {
    * and execute them in parallel, then stream back each results
    * as soon as possible
    */
-  execute({ document, variables } = {}) {
+  async execute({ document, variables } = {}) {
     const through = new PassThrough({ objectMode: true })
 
     try {
       const documents = process_source(this.#schema, document)
-      const execution_contexts = this.build_execution_contexts(
+      const execution_contexts = await this.build_execution_contexts(
           documents,
           variables,
       )

@@ -31,7 +31,7 @@ const executor = new Executor({
   query,
   mutation,
   subscription,
-  context: {}, // optionnal
+  context: async () => ({})
 })
 ```
 
@@ -41,7 +41,7 @@ The executor generator takes an option object
 import stream from 'stream'
 
 stream.pipeline(
-    executor.execute({
+    executor.execute()({
       document: /* GraphQL */`
           query foo {
             ping

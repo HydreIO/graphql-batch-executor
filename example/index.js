@@ -16,7 +16,7 @@ let event = 0
 
 const max_event = 3
 const executor = new Executor({
-  context: {},
+  context: () => ({}),
   schema,
   query  : {
     ping() {
@@ -34,7 +34,7 @@ const executor = new Executor({
 })
 
 pipeline(
-    executor.execute({
+    await executor.execute({
       document: /* GraphQL */ `
       query foo {
         ping
