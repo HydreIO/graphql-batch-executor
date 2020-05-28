@@ -1,10 +1,9 @@
 import process_source from '../../src/process_source.js'
-import graphql from 'graphql'
+import { buildSchema } from 'graphql/index.mjs'
 import { readFileSync } from 'fs'
 import { fileURLToPath } from 'url'
 import { join, dirname } from 'path'
 
-const { buildSchema } = graphql
 const directory = dirname(fileURLToPath(import.meta.url))
 const file = readFileSync(join(directory, './schema.gql'), 'utf-8')
 const schema = buildSchema(file)

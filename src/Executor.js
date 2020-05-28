@@ -1,4 +1,4 @@
-import graphql from 'graphql'
+import { execute, subscribe } from 'graphql/index.mjs'
 import process_source from './process_source.js'
 import { PassThrough, pipeline as pipe } from 'stream'
 import { promisify } from 'util'
@@ -91,7 +91,7 @@ export default class Executor {
   async execute_query(context, stream) {
     const { operation_type, operation_name, ...execution_context } = context
     const rootValue = this.get_root_value(operation_type, execution_context)
-    const { data, errors = [] } = await graphql.execute({
+    const { data, errors = [] } = await execute({
       ...execution_context,
       rootValue,
     })
@@ -107,7 +107,7 @@ export default class Executor {
   async execute_subscription(context, stream) {
     const { operation_type, operation_name, ...execution_context } = context
     const rootValue = this.get_root_value(operation_type, execution_context)
-    const result_or_iterator = await graphql.subscribe({
+    const result_or_iterator = await subscribe({
       ...execution_context,
       rootValue,
     })

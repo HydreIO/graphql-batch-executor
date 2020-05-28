@@ -1,13 +1,12 @@
 /* eslint-disable max-lines */
 import Executor from '../../src/index.js'
-import graphql from 'graphql'
+import { buildSchema, GraphQLError } from 'graphql/index.mjs'
 import stream from 'stream'
 import { promisify } from 'util'
 import { readFileSync } from 'fs'
 import { fileURLToPath } from 'url'
 import { join, dirname } from 'path'
 
-const { buildSchema, GraphQLError } = graphql
 const directory = dirname(fileURLToPath(import.meta.url))
 const file = readFileSync(join(directory, './schema.gql'), 'utf-8')
 const schema = buildSchema(file)

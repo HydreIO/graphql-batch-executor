@@ -1,7 +1,6 @@
-import graphql from 'graphql'
+import { separateOperations, parse, validate } from 'graphql/index.mjs'
 import ProcessingError from './ProcessingError.js'
 
-const { separateOperations, parse, validate } = graphql
 const parse_or_errors = document => {
   try {
     return {
