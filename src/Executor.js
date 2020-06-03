@@ -53,7 +53,8 @@ export default class Executor {
         : this.#contextValue
 
     return documents.map(document => {
-      const [operation] = document.definitions
+      const find_definition = ({ kind }) => kind === 'OperationDefinition'
+      const operation = document.definitions.find(find_definition)
       const {
         operation: operation_type,
         name: { value: operation_name = 'anon' } = {},

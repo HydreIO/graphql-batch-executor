@@ -142,7 +142,19 @@ export default class {
 
     await pipeline(
         await this.#executor.execute({
-          document : 'query uno { me { name } } query dos { ping }',
+          document: /* GraphQL */ `
+          fragment yo on User {
+            name
+          }
+          query uno {
+            me {
+              ...yo
+            }
+          }
+          query dos {
+            ping
+          }
+        `,
           variables: { foo: 1 },
         }),
         async source => {
