@@ -13,7 +13,7 @@ export default class {
 
   static input(assert) {
     const affirm = assert(4)
-    const no_document = 'Missing operation document'
+    const no_document = 'Missing operation query'
     const bad_document = 'Syntax Error: Unexpected Name "invalid".'
     const invalid_schema = 'Expected {} to be a GraphQL schema.'
     const not_in_schema = 'Cannot query field "thanos" on type "Query".'
@@ -24,7 +24,7 @@ export default class {
       affirm({
         that   : 'processing source',
         should : `throw ${ no_document.yellow } if there is no document`,
-        because: error.message,
+        because: error.errors?.[0]?.message,
         is     : no_document,
       })
     }
