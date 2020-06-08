@@ -118,7 +118,7 @@ export default class Executor {
     if (result_or_iterator[Symbol.asyncIterator]) {
       const stream_closed = finished(stream).then(() => {})
 
-      for (; ;) {
+      for (;;) {
         const next_or_end = [result_or_iterator.next(), stream_closed]
         const chunk = await Promise.race(next_or_end)
         const { value } = chunk || await result_or_iterator.return?.() || {}

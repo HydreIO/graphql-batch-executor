@@ -109,7 +109,7 @@ export default class {
               because: chunk.errors[0].message,
               is     : 'Syntax Error: Unexpected Name "invalid".',
             })
-            // source.end()
+          // source.end()
           }
         },
     )
