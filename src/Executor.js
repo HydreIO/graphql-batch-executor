@@ -1,9 +1,10 @@
 import { execute, subscribe } from 'graphql/index.mjs'
 import process_source from './process_source.js'
-import { PassThrough, pipeline as pipe } from 'stream'
+import { PassThrough, finished as finish } from 'stream'
+import events from 'events'
 import { promisify } from 'util'
 
-const pipeline = promisify(pipe)
+const finished = promisify(finish)
 
 export default class Executor {
   #schema
@@ -115,30 +116,35 @@ export default class Executor {
     const format = this.#formatError
 
     if (result_or_iterator[Symbol.asyncIterator]) {
-      await pipeline(
-          result_or_iterator,
-          async function *(source) {
-            for await (const { data, errors = [] } of source) {
-              yield {
-                data,
-                errors: format(errors),
-                operation_type,
-                operation_name,
-              }
-            }
-          },
-          stream,
-      )
-    } else {
-      const { data, errors = [] } = result_or_iterator
+      const stream_closed = finished(stream).then(() => {})
 
-      stream.write({
-        operation_type,
-        operation_name,
-        data,
-        errors: format(errors),
-      })
+      for (; ;) {
+        const next_or_end = [result_or_iterator.next(), stream_closed]
+        const chunk = await Promise.race(next_or_end)
+        const { value } = chunk || await result_or_iterator.return?.() || {}
+
+        if (!value) return
+
+        const { data, errors = [] } = value
+        const operation = {
+          data,
+          errors: format(errors),
+          operation_type,
+          operation_name,
+        }
+
+        if (!stream.write(operation)) await events.once(stream, 'drain')
+      }
     }
+
+    const { data, errors = [] } = result_or_iterator
+
+    stream.write({
+      operation_type,
+      operation_name,
+      data,
+      errors: format(errors),
+    })
   }
 
   /**

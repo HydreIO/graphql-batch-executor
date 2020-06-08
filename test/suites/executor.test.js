@@ -22,7 +22,6 @@ export default class {
     context    : () => ({ name: 'pepeg' }),
     formatError: errors =>
       errors.map(error => {
-        console.log('checking', error.message)
         if (error.message.includes('N WORD')) error.message = 'censored'
         return error
       }),
@@ -100,7 +99,6 @@ export default class {
           }
         },
     )
-
     await pipeline(
         await this.#executor.execute({ document: 'invalid' }),
         async source => {
@@ -111,7 +109,7 @@ export default class {
               because: chunk.errors[0].message,
               is     : 'Syntax Error: Unexpected Name "invalid".',
             })
-            source.end()
+            // source.end()
           }
         },
     )
