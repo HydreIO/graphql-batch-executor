@@ -1,7 +1,7 @@
 /* eslint-disable max-lines */
 import Doubt from '@hydre/doubt'
 import reporter from 'tap-spec-emoji'
-import Executor from '../src/index.js'
+import Executor from '../src/Executor.js'
 import make_schema from '../src/make_schema.js'
 import { GraphQLError } from 'graphql/index.mjs'
 import stream from 'stream'

@@ -2,7 +2,6 @@
   "name": "@hydre/graphql-batch-executor",
   "version": "2.0.9",
   "description": "A transform stream executing multiple graphql operations in parallel",
-  "main": "src/index.js",
   "type": "module",
   "scripts": {
     "test": "node --harmony-top-level-await test/index.test.js",
@@ -20,6 +19,10 @@
   "license": "UNLICENSE",
   "bugs": {
     "url": "https://github.com/hydreio/graphql-batch-executor/issues"
+  },
+  "exports": {
+    "./": "./src/Executor.js",
+    "./make_schema": "./src/make_schema.js"
   },
   "keywords": [
     "graphql",

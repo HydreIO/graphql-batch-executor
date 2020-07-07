@@ -25,12 +25,23 @@ Initialize a new Executor per client
 
 ```js
 import Executor from '@hydre/graphql-batch-executor'
+import make_schema from '@hydre/graphql-batch-executor/make_schema'
+
+// i actually wrote a light and efficient version of makeExecutableSchema
+// without the shitty code and the 7500 dependencies of graphql-tools
+// and using mjs exports of graphql.js
+const schema = make_schema({
+  document: 'type Query { ping: String! }',
+  resolvers: {
+    Query: {
+      ping: () => 'pong'
+    }
+  },
+  directives: {}
+})
 
 const executor = new Executor({
   schema, // schema
-  query,
-  mutation,
-  subscription,
   context: async () => ({}),
   formatError: x => x // format array of errors
 })
