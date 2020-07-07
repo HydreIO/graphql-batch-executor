@@ -1,0 +1,19 @@
+directive @DEFAULT(use: String!) on FIELD_DEFINITION
+
+type Query {
+  ping: String!
+  me: User!
+}
+
+type Mutation {
+  do_stuff: String!
+}
+
+type User {
+  name: String! @DEFAULT(use: "Paul")
+}
+
+type Subscription {
+  pingCount: Int!
+  infinite: Boolean!
+}

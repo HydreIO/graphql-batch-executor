@@ -8,9 +8,6 @@ const finished = promisify(finish)
 
 export default class Executor {
   #schema
-  #queryRoot
-  #mutationRoot
-  #subscriptionRoot
   #contextValue
   #formatError
 
@@ -21,9 +18,6 @@ export default class Executor {
    * @param {graphql.SchemaDefinitionNode} options.schema the graphql schema
    * @param {(Object|Function)} options.context the graphql context
    * @param {Function} options.formatError a mapper function to customize errors
-   * @param {Object} options.query the query root value
-   * @param {Object} options.mutation the mutation root value
-   * @param {Object} options.subscription the subscription root value
    */
   constructor({
     schema = (() => {
@@ -31,14 +25,8 @@ export default class Executor {
     })(),
     context = () => {},
     formatError = x => x,
-    query = {},
-    mutation = {},
-    subscription = {},
   } = {}) {
     this.#schema = schema
-    this.#queryRoot = query
-    this.#mutationRoot = mutation
-    this.#subscriptionRoot = subscription
     this.#contextValue = context
     this.#formatError = formatError
   }
@@ -72,31 +60,9 @@ export default class Executor {
     })
   }
 
-  get_root_value(type) {
-    switch (type) {
-      case 'query':
-        return this.#queryRoot
-
-      case 'mutation':
-        return this.#mutationRoot
-
-      case 'subscription':
-        return this.#subscriptionRoot
-
-      /* c8 ignore next 3 */
-      // not reachable
-      default:
-        return undefined
-    }
-  }
-
   async execute_query(context, stream) {
     const { operation_type, operation_name, ...execution_context } = context
-    const rootValue = this.get_root_value(operation_type, execution_context)
-    const { data, errors = [] } = await execute({
-      ...execution_context,
-      rootValue,
-    })
+    const { data, errors = [] } = await execute(execution_context)
 
     stream.write({
       operation_type,
@@ -108,11 +74,7 @@ export default class Executor {
 
   async execute_subscription(context, stream) {
     const { operation_type, operation_name, ...execution_context } = context
-    const rootValue = this.get_root_value(operation_type, execution_context)
-    const result_or_iterator = await subscribe({
-      ...execution_context,
-      rootValue,
-    })
+    const result_or_iterator = await subscribe(execution_context)
     const format = this.#formatError
 
     if (result_or_iterator[Symbol.asyncIterator]) {
@@ -133,10 +95,14 @@ export default class Executor {
           operation_name,
         }
 
+        /* c8 ignore next 2 */
+        // weird branch
         if (!stream.write(operation)) await events.once(stream, 'drain')
       }
     }
+    /* c8 ignore next 10 */
 
+    // can't seems to reach
     const { data, errors = [] } = result_or_iterator
 
     stream.write({
