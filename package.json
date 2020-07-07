@@ -3,6 +3,7 @@
   "version": "3.0.0",
   "description": "A transform stream executing multiple graphql operations in parallel",
   "type": "module",
+  "main": "./src/Executor.js",
   "scripts": {
     "test": "node --harmony-top-level-await test/index.test.js",
     "coverage": "c8 --check-coverage node --harmony-top-level-await test/index.test.js",
@@ -21,7 +22,7 @@
     "url": "https://github.com/hydreio/graphql-batch-executor/issues"
   },
   "exports": {
-    "./": "./src/Executor.js",
+    ".": "./src/Executor.js",
     "./make_schema": "./src/make_schema.js"
   },
   "keywords": [
