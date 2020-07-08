@@ -35,9 +35,25 @@ const schema = make_schema({
   resolvers: {
     Query: {
       ping: () => 'pong'
+    },
+    Subscription: {
+      ping: {
+        resolve: () => 'pong',
+        async *subscribe() {
+          yield 0
+        }
+      }
     }
   },
-  directives: {}
+  directives: {
+    foo: ({ resolve, // original resolver
+            root, // resolver params in the same order
+            parameters, // .
+            context, // .
+            info, // .
+            directive_arguments, // parameters for the directive
+          }) => {}
+  }
 })
 
 const executor = new Executor({
