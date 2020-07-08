@@ -46,7 +46,7 @@ export default ({ document, resolvers = {}, directives = {} }) => {
               node,
           )
 
-          return (root, parameters, context, info) =>
+          return (root = {}, parameters = {}, context = {}, info) =>
             directive_resolver({
               resolve: async () => resolve(root, parameters, context, info),
               root,
