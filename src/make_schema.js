@@ -23,7 +23,7 @@ export default ({ document, resolvers = {}, directives = {} }) => {
   })
 
   Object.values(built_schema.getTypeMap())
-      .filter(({ name }) => name?.startsWith?.('__') === false)
+      .filter(({ name }) => name?.startsWith?.('__schema') === false)
       .forEach(type => {
         const fields = type?.getFields?.()
 
