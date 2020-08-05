@@ -22,42 +22,42 @@ export default ({ document, resolvers = {}, directives = {} }) => {
     })
   })
 
+  const attach_directive = field => {
+    const node = field.astNode
+
+    field.resolve = node?.directives
+    // eslint-disable-next-line unicorn/no-reduce
+        ?.reduce((resolve, node_directive) => {
+          const {
+            name: { value: directive_name },
+          } = node_directive
+          const directive_resolver = directives[directive_name]
+
+          if (!directive_resolver) return resolve
+
+          const directive_arguments = getDirectiveValues(
+              built_schema.getDirective(directive_name),
+              node,
+          )
+
+          return (root = {}, parameters = {}, context = {}, info) =>
+            directive_resolver({
+              resolve: async () => resolve(root, parameters, context, info),
+              root,
+              parameters,
+              context,
+              info,
+              directive_arguments,
+            })
+        }, field.resolve ?? defaultFieldResolver)
+  }
+
   Object.values(built_schema.getTypeMap())
       .filter(({ name }) => name?.startsWith?.('__') === false)
       .forEach(type => {
         const fields = type?.getFields?.()
 
         if (!fields) return
-
-        const attach_directive = field => {
-          const node = field.astNode
-
-          field.resolve = node?.directives
-          // eslint-disable-next-line unicorn/no-reduce
-          ?.reduce((resolve, node_directive) => {
-            const {
-              name: { value: directive_name },
-            } = node_directive
-            const directive_resolver = directives[directive_name]
-
-            if (!directive_resolver) return resolve
-
-            const directive_arguments = getDirectiveValues(
-                built_schema.getDirective(directive_name),
-                node,
-            )
-
-            return (root = {}, parameters = {}, context = {}, info) =>
-              directive_resolver({
-                resolve: async () => resolve(root, parameters, context, info),
-                root,
-                parameters,
-                context,
-                info,
-                directive_arguments,
-              })
-          }, field.resolve ?? defaultFieldResolver)
-        }
 
         Object.values(fields).forEach(attach_directive)
       })

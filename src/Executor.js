@@ -5,6 +5,7 @@ import events from 'events'
 import { promisify } from 'util'
 
 const finished = promisify(finish)
+const find_definition = ({ kind }) => kind === 'OperationDefinition'
 
 export default class Executor {
   #schema
@@ -42,7 +43,6 @@ export default class Executor {
         : this.#contextValue
 
     return documents.map(document => {
-      const find_definition = ({ kind }) => kind === 'OperationDefinition'
       const operation = document.definitions.find(find_definition)
       const {
         operation: operation_type,
