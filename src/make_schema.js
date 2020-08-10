@@ -12,12 +12,16 @@ export default ({ document, resolvers = {}, directives = {} }) => {
     const fields = type.getFields()
 
     Object.entries(fields_handlers).forEach(([field_name, handler]) => {
-      if (typeof handler === 'function') fields[field_name].resolve = handler
+      const field = fields[field_name]
+
+      /* c8 ignore next 1 */
+      if (!field) throw new Error(`${ field_name } is not in schema`)
+      if (typeof handler === 'function') field.resolve = handler
       else {
         const { resolve, subscribe } = handler
 
-        fields[field_name].resolve = resolve
-        fields[field_name].subscribe = subscribe
+        field.resolve = resolve
+        field.subscribe = subscribe
       }
     })
   })
