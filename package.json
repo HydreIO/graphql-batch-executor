@@ -57,7 +57,7 @@
     "@sidy/eslint-config-sidy": "^1.4.15",
     "babel-eslint": "^11.0.0-beta.2",
     "c8": "^7.3.0",
-    "eslint": "^7.6.0",
+    "eslint": "^7.7.0",
     "eslint-plugin-unicorn": "^21.0.0",
     "prettier-eslint-cli": "^5.0.0",
     "supports-color": "^7.1.0",
