@@ -10,7 +10,7 @@
     "lint": "prettier-eslint $PWD/\"**/*.js\" --print-width 80 --list-different && eslint --color .",
     "format": "prettier-eslint $PWD/\"**/*.js\" --print-width 80 --write",
     "example": "DEBUG='batch:example*' node --harmony-top-level-await example/index.js",
-    "postversion": "git push && git push --tags"
+    "postversion": "git push --follow-tags"
   },
   "repository": {
     "type": "git",
@@ -45,22 +45,22 @@
   },
   "homepage": "https://github.com/hydreio/graphql-batch-executor#readme",
   "dependencies": {
-    "debug": "^4.2.0",
-    "graphql": "^15.4.0"
+    "debug": "^4.3.2",
+    "graphql": "^15.6.0"
   },
   "devDependencies": {
-    "@babel/core": "^7.12.3",
-    "@babel/plugin-proposal-class-properties": "^7.12.1",
-    "@babel/plugin-proposal-numeric-separator": "^7.12.1",
+    "@babel/core": "^7.15.5",
+    "@babel/eslint-parser": "^7.15.7",
+    "@babel/plugin-proposal-class-properties": "^7.14.5",
+    "@babel/plugin-proposal-numeric-separator": "^7.14.5",
     "@babel/plugin-syntax-import-meta": "^7.10.4",
-    "@hydre/doubt": "^7.1.0",
-    "@sidy/eslint-config-sidy": "^1.4.15",
-    "babel-eslint": "^11.0.0-beta.2",
-    "c8": "^7.3.5",
-    "eslint": "^7.12.1",
-    "eslint-plugin-unicorn": "^23.0.0",
-    "prettier-eslint-cli": "^5.0.0",
-    "supports-color": "^7.2.0",
+    "@hydre/doubt": "^7.2.1",
+    "@hydre/eslint-config-hydre": "^1.4.16",
+    "c8": "^7.9.0",
+    "eslint": "^7.32.0",
+    "eslint-plugin-unicorn": "^36.0.0",
+    "prettier-eslint-cli": "^5.0.1",
+    "supports-color": "^9.0.2",
     "tap-spec-emoji": "^6.1.2"
   }
 }

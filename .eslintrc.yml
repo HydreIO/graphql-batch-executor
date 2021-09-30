@@ -4,12 +4,12 @@ env:
 plugins:
   - unicorn
 extends:
-  - "@sidy/eslint-config-sidy"
+  - "@hydre/eslint-config-hydre"
 globals:
   Atomics: readonly
   SharedArrayBuffer: readonly
 # Nodejs support some experimental ecma features but not eslint
-parser: babel-eslint
+parser: "@babel/eslint-parser"
 parserOptions:
   sourceType: module
   configFile: package.json
