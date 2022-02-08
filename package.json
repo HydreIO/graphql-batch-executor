@@ -45,22 +45,22 @@
   },
   "homepage": "https://github.com/hydreio/graphql-batch-executor#readme",
   "dependencies": {
-    "debug": "^4.3.2",
-    "graphql": "^15.6.0"
+    "debug": "^4.3.3",
+    "graphql": "^16.3.0"
   },
   "devDependencies": {
-    "@babel/core": "^7.15.5",
-    "@babel/eslint-parser": "^7.15.7",
-    "@babel/plugin-proposal-class-properties": "^7.14.5",
-    "@babel/plugin-proposal-numeric-separator": "^7.14.5",
+    "@babel/core": "^7.17.0",
+    "@babel/eslint-parser": "^7.17.0",
+    "@babel/plugin-proposal-class-properties": "^7.16.7",
+    "@babel/plugin-proposal-numeric-separator": "^7.16.7",
     "@babel/plugin-syntax-import-meta": "^7.10.4",
     "@hydre/doubt": "^7.2.1",
     "@hydre/eslint-config-hydre": "^1.4.16",
-    "c8": "^7.9.0",
+    "c8": "^7.11.0",
     "eslint": "^7.32.0",
-    "eslint-plugin-unicorn": "^36.0.0",
+    "eslint-plugin-unicorn": "^40.1.0",
     "prettier-eslint-cli": "^5.0.1",
-    "supports-color": "^9.0.2",
+    "supports-color": "^9.2.1",
     "tap-spec-emoji": "^6.1.2"
   }
 }
